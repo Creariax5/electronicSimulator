@@ -1,4 +1,6 @@
+// raycaster.js
 import * as THREE from 'three';
+import { isMouseOverUI } from './saveLoad.js';
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -17,6 +19,15 @@ function onWindowResize(camera, renderer) {
 }
 
 export function updateRaycaster(camera, cubes) {
+    // If mouse is over UI, remove any highlight and return null
+    if (isMouseOverUI) {
+        if (highlightedCube) {
+            highlightedCube.material = highlightedCube.userData.originalMaterial;
+            highlightedCube = null;
+        }
+        return null;
+    }
+
     raycaster.setFromCamera(mouse, camera);
 
     // Convert Map to array for intersection test

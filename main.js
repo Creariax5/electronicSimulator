@@ -7,6 +7,7 @@ import { initRaycaster, updateRaycaster } from "./raycaster.js";
 import { setupInteractions, updateSeletedCube } from "./interactions.js";
 import { setupMaterialSelector, getBuildMaterial } from "./materials.js";
 import { updateCubes } from "./updateCubes.js";
+import { setupSaveLoadSystem } from "./saveLoad.js";
 
 const scene = new THREE.Scene();
 
@@ -27,6 +28,9 @@ initRaycaster(camera, renderer);
 
 setupInteractions(scene, cubes);
 let buildMaterial = setupMaterialSelector();
+
+// Setup save/load system
+setupSaveLoadSystem(scene, cubes);
 
 function animate() {
     highlightedCube = updateRaycaster(camera, cubes);
