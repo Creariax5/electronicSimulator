@@ -2,29 +2,32 @@ import * as THREE from 'three';
 
 import { SIZE } from "./consts.js";
 import { material1, material2 } from "./materials.js";
+import { getKey } from "./consts.js";
 
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 
 export function initCubes(scene) {
-    let cubes = [];
-
+    let cubes = new Map();
+    
     let indice = true;
-    for (let i = 0; i < SIZE - 1; i++) {
-        for (let j = 0; j < SIZE - 1; j++) {
-            let cube;
-            if (indice) {
-                cube = new THREE.Mesh(geometry, material1.clone());
-                indice = false;
-            } else {
-                cube = new THREE.Mesh(geometry, material2.clone());
-                indice = true;
-            }
-            cube.position.x = i;
-            cube.position.y = j;
+    const z = 0;
+    
+    for (let x = 0; x < SIZE - 1; x++) {
+        for (let y = 0; y < SIZE - 1; y++) {
+            const cube = new THREE.Mesh(
+                geometry, 
+                indice ? material1.clone() : material2.clone()
+            );
+            
+            cube.position.set(x, y, z);
+            
             cube.userData.originalMaterial = cube.material;
-            cubes.push(cube);
+            
+            cubes.set(getKey(x, y, z), cube);
             scene.add(cube);
+            indice = !indice;
         }
     }
+    
     return cubes;
 }

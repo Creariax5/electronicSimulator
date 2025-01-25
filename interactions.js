@@ -1,35 +1,49 @@
 import * as THREE from 'three';
 
 import { buildMaterial } from "./materials";
+import { getKey } from "./consts";
 
 let selectedCube = null;
+let currentBuildMaterial = null;
 
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 
 function placeCube(scene, cubes) {
     if (selectedCube != null && selectedCube.position.z < 1) {
-        let cube;
-                    
-        cube = new THREE.Mesh(geometry, buildMaterial.clone());
-        cube.position.x = selectedCube.position.x;
-        cube.position.y = selectedCube.position.y;
-        cube.position.z = selectedCube.position.z + 1;
+        const cube = new THREE.Mesh(geometry, currentBuildMaterial.clone());
+        
+        cube.position.set(
+            selectedCube.position.x,
+            selectedCube.position.y,
+            selectedCube.position.z + 1
+        );
+        
         cube.userData.originalMaterial = cube.material;
-        cubes.push(cube);
-        scene.add(cube);
+        
+        const key = getKey(cube.position.x, cube.position.y, cube.position.z);
+        
+        if (!cubes.has(key)) {
+            cubes.set(key, cube);
+            scene.add(cube);
+        }
     }
 }
 
+
 function deleteCube(scene, cubes) {
     if (selectedCube != null && selectedCube.position.z >= 1) {
+        const key = getKey(
+            selectedCube.position.x,
+            selectedCube.position.y,
+            selectedCube.position.z
+        );
+        
         scene.remove(selectedCube);
-        const index = cubes.indexOf(selectedCube);
-        if (index > -1) {
-            cubes.splice(index, 1);
-        }
+        cubes.delete(key);
         selectedCube = null;
     }
 }
+
 
 export function setupInteractions(scene, cubes) {
     let deleteMode = false;
@@ -38,10 +52,10 @@ export function setupInteractions(scene, cubes) {
     document.addEventListener('mousedown', (e) => {
         if (e.button === 0 || e.button === 2) {
             if (e.button === 0) { 
-                placeCube(scene, cubes);
+                deleteCube(scene, cubes);
                 buildMode = true;
             } else if (e.button === 2) {
-                deleteCube(scene, cubes);
+                placeCube(scene, cubes);
                 deleteMode = true;
             }
         }
@@ -56,19 +70,20 @@ export function setupInteractions(scene, cubes) {
 
     document.addEventListener('mousemove', (event) => {
         if (buildMode) { 
-            placeCube(scene, cubes);
-        } else if (deleteMode) {
             deleteCube(scene, cubes);
+        } else if (deleteMode) {
+            placeCube(scene, cubes);
         }
     });
     
     document.addEventListener('contextmenu', (event) => {
         event.preventDefault();
-        deleteCube(scene, cubes);
+        placeCube(scene, cubes);
     });
 }
 
-export function updateSeletedCube(highlightedCube) {
+export function updateSeletedCube(highlightedCube, buildMaterial) {
     selectedCube = highlightedCube;
+    currentBuildMaterial = buildMaterial;
 }
 

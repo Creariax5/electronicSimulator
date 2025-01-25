@@ -5,6 +5,8 @@ import { initCubes } from "./cubes.js";
 import { SIZE } from "./consts.js";
 import { initRaycaster, updateRaycaster } from "./raycaster.js";
 import { setupInteractions, updateSeletedCube } from "./interactions.js";
+import { setupMaterialSelector, getBuildMaterial } from "./materials.js";
+import { updateCubes } from "./updateCubes.js";
 
 const scene = new THREE.Scene();
 
@@ -24,10 +26,13 @@ let highlightedCube = null;
 initRaycaster(camera, renderer);
 
 setupInteractions(scene, cubes);
+let buildMaterial = setupMaterialSelector();
 
 function animate() {
     highlightedCube = updateRaycaster(camera, cubes);
-    updateSeletedCube(highlightedCube);
+    updateSeletedCube(highlightedCube, buildMaterial);
+    buildMaterial = getBuildMaterial();
+    updateCubes(cubes);
 
     renderer.render(scene, camera);
 }
