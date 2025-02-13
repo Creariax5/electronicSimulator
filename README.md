@@ -1,6 +1,8 @@
 # Three.js Interactive Cube Grid
 
 An interactive 3D application built with Three.js that allows users to create, manipulate, and simulate conductor/energy interactions in a grid of cubes.
+
+Link to test: https://electronic-simulator.vercel.app/
 ![image](https://github.com/user-attachments/assets/4eeb3e3a-168c-449e-b758-0d9f1d9bde1e)
 
 ## Features
